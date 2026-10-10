@@ -627,10 +627,13 @@ void* MinecraftUtils::loadMinecraftLib(void* showMousePointerCallback, void* hid
     auto bgetifaddrs = linker::dlsym(libc, "getifaddrs");
     if(bgetifaddrs) {
         hooks.emplace_back(mcpelauncher_hook_t{"_ZN3rtc10getifaddrsEPP7ifaddrs", bgetifaddrs});
+        // Newer WebRTC builds use the webrtc:: namespace instead of rtc::
+        hooks.emplace_back(mcpelauncher_hook_t{"_ZN6webrtc10getifaddrsEPP7ifaddrs", bgetifaddrs});
     }
     auto bfreeifaddrs = linker::dlsym(libc, "freeifaddrs");
     if(bfreeifaddrs) {
         hooks.emplace_back(mcpelauncher_hook_t{"_ZN3rtc11freeifaddrsEP7ifaddrs", bfreeifaddrs});
+        hooks.emplace_back(mcpelauncher_hook_t{"_ZN6webrtc11freeifaddrsEP7ifaddrs", bfreeifaddrs});
     }
     if(ReadEnvFlag("MCPELAUNCHER_DISABLE_TELEMETRY", false)) {
         hooks.emplace_back(mcpelauncher_hook_t{"_ZN9Microsoft12Applications6Events19TelemetrySystemBase5startEv", (void*)+[]() {
